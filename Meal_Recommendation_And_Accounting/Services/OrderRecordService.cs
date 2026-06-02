@@ -47,6 +47,64 @@ namespace Meal_Recommendation_And_Accounting.Services
         {
             return orderRecordRepository.Delete(id);
         }
+
+        // 以下是統計分析相關的方法
+        public int GetOrderCount(int userId)
+        {
+            List<OrderRecord> records = orderRecordRepository.GetByUserId(userId);
+
+            return records.Count;
+        }
+
+        public double GetAverageAmount(int userId)
+        {
+            List<OrderRecord> records = orderRecordRepository.GetByUserId(userId);
+
+            if (records.Count == 0)
+            {
+                return 0;
+            }
+
+            double average = records.Average(r => r.Amount);
+
+            return average;
+        }
+
+        public string GetFavoriteMealName(int userId)
+        {
+            List<OrderRecord> records = orderRecordRepository.GetByUserId(userId);
+
+            if (records.Count == 0)
+            {
+                return "尚無資料";
+            }
+
+            string favoriteMeal = records
+                .GroupBy(r => r.MealName)
+                .OrderByDescending(g => g.Count())
+                .First()
+                .Key;
+
+            return favoriteMeal;
+        }
+
+        public string GetFavoriteRestaurantName(int userId)
+        {
+            List<OrderRecord> records = orderRecordRepository.GetByUserId(userId);
+
+            if (records.Count == 0)
+            {
+                return "尚無資料";
+            }
+
+            string favoriteRestaurant = records
+                .GroupBy(r => r.RestaurantName)
+                .OrderByDescending(g => g.Count())
+                .First()
+                .Key;
+
+            return favoriteRestaurant;
+        }
     }
 }
 

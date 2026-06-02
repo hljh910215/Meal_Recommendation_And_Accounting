@@ -28,6 +28,7 @@ namespace Meal_Recommendation_And_Accounting.Forms
 
             SetDataGridViewStyle();
             LoadOrderRecords();
+            LoadPreferenceAnalysis();
         }
 
         private void SetDataGridViewStyle()
@@ -163,6 +164,9 @@ namespace Meal_Recommendation_And_Accounting.Forms
             {
                 MessageBox.Show("刪除成功，畫面將不再顯示這筆資料。");
                 LoadOrderRecords();
+
+                //軟刪除的資料不會再被分析計算。
+                LoadPreferenceAnalysis();
             }
             else
             {
@@ -173,6 +177,26 @@ namespace Meal_Recommendation_And_Accounting.Forms
         private void btnBackToMain_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        // 以下是統計分析相關的程式碼
+        private void LoadPreferenceAnalysis()
+        {
+            int totalCount = orderRecordService.GetOrderCount(currentUser.Id);
+            int totalAmount = orderRecordService.GetTotalAmountByUserId(currentUser.Id);
+            double averageAmount = orderRecordService.GetAverageAmount(currentUser.Id);
+            string favoriteMeal = orderRecordService.GetFavoriteMealName(currentUser.Id);
+            string favoriteRestaurant = orderRecordService.GetFavoriteRestaurantName(currentUser.Id);
+
+            lblTotalCount.Text = totalCount + " 次";
+            lblTotalAmount.Text = totalAmount + " 元";
+            lblAverageAmount.Text = averageAmount.ToString("0") + " 元";
+            lblFavoriteMeal.Text = favoriteMeal;
+            lblFavoriteRestaurant.Text = favoriteRestaurant;
+        }
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
